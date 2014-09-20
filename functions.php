@@ -119,19 +119,66 @@
 	function getTestCalendar($content)
 	{
 		
-		preg_match_all('/<table align="center" border="1" width="100%" cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$content, $table);
-		preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$table[1][0], $contentTitle);
-		preg_match_all('/<td align="left"   class="tab_texto">([^`]*?)<\/td>/',$table[1][0], $contentText);
+		preg_match_all('/<table align="center" border="1" width="100%" cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$content, $tableTestInformations);
+		preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$tableTestInformations[1][0], $matterInformations);
+		preg_match_all('/<td align="left"   class="tab_texto">([^`]*?)<\/td>/',$tableTestInformations[1][0], $matterName);
+
+		// preg_match_all('/<table align=center border=1 width="100%" height=23 cellpadding=0 cellspacing=0>([^`]*?)<\/table>/',$content, $tableNoteDateInformations);
+		// preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$tableNoteDateInformations[1][0], $matterInformationsNoteDate);
+		// preg_match_all('/<td align="left"   class="tab_texto">([^`]*?)<\/td>/',$tableNoteDateInformations[1][0], $matterNameNoteDate);
 
 		$array = array();
 
 		$i = 0;
 
-		foreach ($contentTitle[1][0] as $title) {
+		$arrayChunck = array_chunk($matterInformations[1], 7);
 
-			die(var_dump($title));
+		foreach ($matterName[1] as $key => $matter) {
 
+			$array[$i]['matterName'] = trim(utf8_encode($matter));
+			$array[$i]['matterCode'] = trim(utf8_encode($arrayChunck[$key][0]));
+			$array[$i]['matterClass'] = trim(utf8_encode($arrayChunck[$key][1]));
+			$array[$i]['testInformations']['firstGq'] = trim(utf8_encode($arrayChunck[$key][2]));
+			$array[$i]['testInformations']['firstGq2Call'] = trim(utf8_encode($arrayChunck[$key][3]));
+			$array[$i]['testInformations']['secondGq'] = trim(utf8_encode($arrayChunck[$key][4]));
+			$array[$i]['testInformations']['final'] = trim(utf8_encode($arrayChunck[$key][5]));
+			$array[$i]['testInformations']['final2Call'] = trim(utf8_encode($arrayChunck[$key][6]));
+
+			$i++;
 		}
+
+
+		return $array;
+
+	}
+
+	function getPeriodNotes($content)
+	{
+		
+		preg_match_all('/<table border="1" width="100%" cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$content, $tableTestInformations);
+		preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$tableTestInformations[1][0], $matterInformations);
+
+		$array = array();
+
+		$i = 0;
+
+		$arrayChunck = array_chunk($matterInformations[1], 8);
+
+		foreach ($arrayChunck as $key => $arrayMatter) {
+			$array[$i]['matterCode'] = trim(utf8_encode($arrayMatter[0]));
+			$array[$i]['matterClass'] = trim(utf8_encode($arrayMatter[1]));
+			$array[$i]['noteInformations']['firstGq'] = trim(utf8_encode($arrayMatter[2]));
+			$array[$i]['noteInformations']['secondGq'] = trim(utf8_encode($arrayMatter[3]));
+			$array[$i]['noteInformations']['average'] = trim(utf8_encode($arrayMatter[4]));
+			$array[$i]['noteInformations']['final'] = trim(utf8_encode($arrayMatter[5]));
+			$array[$i]['noteInformations']['finalAverage'] = trim(utf8_encode($arrayMatter[6]));
+			$array[$i]['noteInformations']['finalSituation'] = trim(utf8_encode($arrayMatter[7]));
+
+			$i++;
+		}
+
+		return $array;
+
 
 	}
 

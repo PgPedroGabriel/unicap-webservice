@@ -17,13 +17,13 @@
 //6603000110
 	include 'functions.php';
 
-//	$mat = @$_POST['matricula'] or outRequiredParameters();
-//	$digit = @$_POST['digito'] or outRequiredParameters();
-//	$pass = @$_POST['senha'] or outRequiredParameters();
+	$mat = @$_POST['matricula'] or outRequiredParameters();
+	$digit = '5';
+	$pass = @$_POST['senha'] or outRequiredParameters();
 
-	$mat = '201010960';
-	$digit = '0';
-	$pass = '132513';
+	// $mat = '201010960';
+	// $digit = '0';
+	// $pass = '132513';
 
 
 	$ch = curl_init();
@@ -71,11 +71,12 @@
 
 		$testCalendar = getTestCalendar($result['content']);
 
-		printJson(true, "Sucesso", array('userName' => $userName, 'userData' => $userPersonalData));
+		$result = getContentRotines($result['hash'], 4);
 
-		// $result[] = getContentRotines($result[1]['hash'], 3);
+		$periodNotes = getPeriodNotes($result['content']);
 
 		// $result[] = getContentRotines($result[2]['hash'], 4);
+		printJson(true, "Sucesso", array('userName' => $userName, 'userData' => $userPersonalData, 'testData' => $testCalendar, 'noteData' => $periodNotes));
 
 	} else {
 		printJson();
