@@ -118,8 +118,20 @@
 
 	function getTestCalendar($content)
 	{
+		
+		preg_match_all('/<table align="center" border="1" width="100%" cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$content, $table);
+		preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$table[1][0], $contentTitle);
+		preg_match_all('/<td align="left"   class="tab_texto">([^`]*?)<\/td>/',$table[1][0], $contentText);
 
-		die(var_dump($content));
+		$array = array();
+
+		$i = 0;
+
+		foreach ($contentTitle[1][0] as $title) {
+
+			die(var_dump($title));
+
+		}
 
 	}
 

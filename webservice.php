@@ -14,12 +14,17 @@
 	* 10 - Atividades complementares
 	*/
 
-
+//6603000110
 	include 'functions.php';
 
-	$mat = @$_POST['matricula'] or outRequiredParameters();
-	$digit = @$_POST['digito'] or outRequiredParameters();
-	$pass = @$_POST['senha'] or outRequiredParameters();
+//	$mat = @$_POST['matricula'] or outRequiredParameters();
+//	$digit = @$_POST['digito'] or outRequiredParameters();
+//	$pass = @$_POST['senha'] or outRequiredParameters();
+
+	$mat = '201010960';
+	$digit = '0';
+	$pass = '132513';
+
 
 	$ch = curl_init();
 	$timeout = 0;
