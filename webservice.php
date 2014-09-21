@@ -57,7 +57,7 @@
 
 		preg_match_all('/<form method=\'post\' action=\'([^`]*?)\'/',$server_output, $conteudo);
 
-		$userName = getUserName($server_output);
+		// $userName = getUserName($server_output);
 
 		$result = array();
 
@@ -75,8 +75,14 @@
 
 		$periodNotes = getPeriodNotes($result['content']);
 
-		// $result[] = getContentRotines($result[2]['hash'], 4);
-		printJson(true, "Sucesso", array('userName' => $userName, 'userData' => $userPersonalData, 'testData' => $testCalendar, 'noteData' => $periodNotes));
+		$result = getContentRotines($result['hash'], 14);
+
+		$timeClass = getTimeClass($result['content']);
+
+		$matterData = generateMatterData($testCalendar, $periodNotes, $timeClass);
+
+		printJson(true, "Sucesso", array('userData' => $userPersonalData, 
+										 'matterData' => $matterData));
 
 	} else {
 		printJson();

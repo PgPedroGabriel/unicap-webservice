@@ -100,15 +100,16 @@
 
 		$array = array();
 
-		$i = 0;
 
-		foreach ($tdText[1] as $key => $value) {
-			if($key % 2 == 0)
-				$array[$i]['type'] = utf8_encode(trim($value));
-			else {
-				$array[$i]['info'] = utf8_encode(trim($value));
-				$i++;
-			}
+		$arrayChunck = array_chunk($tdText[1], 2);
+
+		foreach ($arrayChunck as $key => $value) {
+			if( isset($value[0]) && !empty($value[0]) ){
+				if($value[0] == "&nbsp;" || utf8_encode(trim($value[0])) == "Filiação") // nome do pai
+					$array["Filiação"][] = utf8_encode(trim($value[1])) ;
+				else
+					$array[utf8_encode(trim($value[0]))] = utf8_encode(trim($value[1])) ;
+			} 
 		}
 
 		return $array;
@@ -179,6 +180,147 @@
 
 		return $array;
 
+
+	}
+
+	function getTimeClass($content)
+	{
+		preg_match_all('/<table align=center border=1 width="100%" height=35 cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$content, $tableMatter);
+		preg_match_all('/<table width="100%%" border="0">([^`]*?)<\/table>/',$content, $tableTimeInformation);
+		preg_match_all('/<td.*?>([^`]*?)<\/td>/',$tableMatter[1][0], $matterInformations);
+		preg_match_all('/<td.*?>([^`]*?)<\/td>/',$tableTimeInformation[1][0], $timeInformations);
+
+		$array = array();
+		
+		$i = 0;
+
+		$arrayChunck = array_chunk($matterInformations[1], 8);
+
+		unset($arrayChunck[ count($arrayChunck) - 1 ]);
+
+		$days = checkDay($content);
+		$hours = checkTime($content);
+
+
+		foreach($arrayChunck as $arrayMatter){
+
+
+			$array[$i]['matterCode'] = trim(utf8_encode($arrayMatter[0]));
+			$array[$i]['matterName'] = trim(utf8_encode($arrayMatter[1]));
+			$array[$i]['matterClass'] = trim(utf8_encode($arrayMatter[2]));
+			
+			$matterRoomString = trim(utf8_encode($arrayMatter[3]));
+
+			$array[$i]['matterRoom'] = "Bloco ".$matterRoomString[0].", sala ".$matterRoomString;
+
+			$timeExploded = explode(" ",trim($arrayMatter[4]));
+
+			$array[$i]['days'][$days[$timeExploded[0][0]]] = array( $hours[$timeExploded[0][1]],  $hours[$timeExploded[0][2]] );
+
+			if(isset($timeExploded[1]))
+				$array[$i]['days'][$days[$timeExploded[1][0]]] = array( $hours[$timeExploded[1][1]],  $hours[$timeExploded[1][2]] );
+
+			$array[$i]['matterTime'] = trim(utf8_encode($arrayMatter[4]));
+			$array[$i]['matterPeriod'] = trim(utf8_encode($arrayMatter[7]));
+			
+			$i++;
+		}
+
+		return $array;
+	}
+
+	function checkTime($content){
+		
+		preg_match_all('/<table width="100%%" border="0">([^`]*?)<\/table>/',$content, $tableTimeInformation);
+		preg_match_all('/<td.*?>([^`]*?)<\/td>/',$tableTimeInformation[1][0], $timeInformations);
+		
+		$arrayChunck = array_chunk($timeInformations[1], 20);
+		
+		// $arrayDays  = array();
+		$arrayHours = array();
+		// $result     = array();
+
+		foreach ($arrayChunck[0] as $hours) {
+
+			$time = explode("=", $hours);
+
+			if(isset($time[1]))
+				$arrayHours[trim($time[1])] = trim($time[0]);
+
+		}
+
+		return $arrayHours;
+
+
+		// foreach ($arrayChunck[1] as $days) {
+		// 	$day = explode("=", trim(strip_tags($days)));
+		// 	if(isset($day[1]))
+		// 		$arrayDays[trim($day[1])] = trim($day[0]);
+		// }
+
+		// $result[$arrayDays[$string[0]]] = $arrayHours[$string[1]];
+
+		// return $result;
+	
+	}
+
+
+	function checkDay($content){
+
+		preg_match_all('/<table width="100%%" border="0">([^`]*?)<\/table>/',$content, $tableTimeInformation);
+		preg_match_all('/<td.*?>([^`]*?)<\/td>/',$tableTimeInformation[1][0], $timeInformations);
+
+		$arrayDays  = array();
+		
+		$arrayChunck = array_chunk($timeInformations[1], 20);
+
+		foreach ($arrayChunck[1] as $days) {
+			$day = explode("=", trim(strip_tags($days)));
+			if(isset($day[1]))
+				$arrayDays[trim($day[1])] = trim($day[0]);
+		}
+
+
+		return $arrayDays;
+
+	}
+
+	function generateMatterData($testCalendar, $periodNotes, $timeClass)
+	{
+
+		$array = array();
+
+		foreach ($testCalendar as $key => $matter) {
+
+			$array[$matter['matterCode']]['name'] 			  = $matter['matterName'];
+			$array[$matter['matterCode']]['class'] 			  = $matter['matterClass'];
+			$array[$matter['matterCode']]['testInformations'] = $matter['testInformations'];
+
+			if(isset($periodNotes[$key]) ) // existem pessoas com 5 cadeiras porem com horarios difrentes por exemplo, tornando o array  de testcalendar com 7 posições e o time class tbm, porem as notas ficam as mesmas 5 cadeiras
+				$array[$periodNotes[$key]['matterCode']]['noteInformations'] = $periodNotes[$key]['noteInformations'];
+
+			$array[$timeClass[$key]['matterCode']]['matterRoom']   = $timeClass[$key]['matterRoom'];
+		
+			if(isset($array[$timeClass[$key]['matterCode']]['days']) ) {
+		
+				$array[$timeClass[$key]['matterCode']]['days']         = array_merge($array[$timeClass[$key]['matterCode']]['days'], $timeClass[$key]['days']);
+		
+			} else {
+				
+				$array[$timeClass[$key]['matterCode']]['days']         = $timeClass[$key]['days'];
+		
+			}
+			if(isset($array[$timeClass[$key]['matterCode']]['matterTime']))
+				$array[$timeClass[$key]['matterCode']]['matterTime'] .= ' '.$timeClass[$key]['matterTime'];
+			else
+				$array[$timeClass[$key]['matterCode']]['matterTime']   = $timeClass[$key]['matterTime'];
+
+			if(!isset($array[$timeClass[$key]['matterCode']]['matterPeriod']))
+				$array[$timeClass[$key]['matterCode']]['matterPeriod'] = $timeClass[$key]['matterPeriod'];
+
+		}
+
+		return $array;
 
 	}
 
