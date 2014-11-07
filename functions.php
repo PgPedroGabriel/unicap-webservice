@@ -320,7 +320,17 @@
 
 		}
 
-		return $array;
+		$new_array = array();
+
+		$index = 0;
+
+		foreach ($array as $key => $value) {
+			$new_array[$index] = $value;
+			$new_array[$index]['matterCode'] = $key;
+			$index++;
+		}
+
+		return $new_array;
 
 	}
 
