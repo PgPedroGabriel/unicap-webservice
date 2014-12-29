@@ -173,7 +173,7 @@
 			$array[$i]['noteInformations']['average'] = trim(utf8_encode($arrayMatter[4]));
 			$array[$i]['noteInformations']['final'] = trim(utf8_encode($arrayMatter[5]));
 			$array[$i]['noteInformations']['finalAverage'] = trim(utf8_encode($arrayMatter[6]));
-			$array[$i]['noteInformations']['finalSituation'] = trim(utf8_encode($arrayMatter[7]));
+			$array[$i]['noteInformations']['finalSituation'] = trim(utf8_encode(strip_tags($arrayMatter[7])));
 
 			$i++;
 		}
@@ -212,6 +212,7 @@
 			$matterRoomString = trim(utf8_encode($arrayMatter[3]));
 
 			$array[$i]['matterRoom'] = "Bloco ".$matterRoomString[0].", sala ".$matterRoomString;
+			$array[$i]['matterRoomShort'] = $matterRoomString;
 
 			$timeExploded = explode(" ",trim($arrayMatter[4]));
 
@@ -295,11 +296,23 @@
 			$array[$matter['matterCode']]['name'] 			  = $matter['matterName'];
 			$array[$matter['matterCode']]['class'] 			  = $matter['matterClass'];
 			$array[$matter['matterCode']]['testInformations'] = $matter['testInformations'];
+			$array[$matter['matterCode']]['initialLetters']   = "";
 
+			$words = preg_split("/[\s,_-]+/", $matter['matterName']);
+
+			foreach ($words as $index => $word) {
+				if(count($words) == 1)
+					$array[$matter['matterCode']]['initialLetters']   .= $word[0].$word[1];
+				else if(count($words) >= 2 && ($index == 2 || $index == 0) )
+					$array[$matter['matterCode']]['initialLetters']   .= $word[0];
+				else if(count($words) == 2)
+					$array[$matter['matterCode']]['initialLetters']   .= $word[0];
+			}
 			if(isset($periodNotes[$key]) ) // existem pessoas com 5 cadeiras porem com horarios difrentes por exemplo, tornando o array  de testcalendar com 7 posições e o time class tbm, porem as notas ficam as mesmas 5 cadeiras
 				$array[$periodNotes[$key]['matterCode']]['noteInformations'] = $periodNotes[$key]['noteInformations'];
 
 			$array[$timeClass[$key]['matterCode']]['matterRoom']   = $timeClass[$key]['matterRoom'];
+			$array[$timeClass[$key]['matterCode']]['matterRoomShort']   = $timeClass[$key]['matterRoomShort'];
 		
 			if(isset($array[$timeClass[$key]['matterCode']]['days']) ) {
 		
