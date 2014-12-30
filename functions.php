@@ -1,6 +1,29 @@
 <?php  
 	
 
+	function getColorPeriod($period){
+		$array = array();
+
+		$array['01'] = "#FFA4C400";
+		$array['02'] = "#FF60A917";
+		$array['03'] = "#FF00ABA9";
+		$array['04'] = "#FF1BA1E2";
+		$array['05'] = "#FFAA00FF";
+		$array['06'] = "#FFE51400";
+		$array['07'] = "#FFFA6800";
+		$array['08'] = "#FF76608A";
+		$array['09'] = "#FFF472D0";
+		$array['10'] = "#FFD80073";
+		$array['11'] = "#FF7A3B3F";
+		$array['12'] = "#FFA20025";
+		$array['13'] = "#FF008A00";
+
+		if(isset($array[$period]))
+			return $array[$period];
+		else
+			return "#FFE51400";
+	}
+
 	function printJson($status = false, $message = "Ocorreu um erro", $data = array()){
 
 		$json = new stdClass();
@@ -330,6 +353,8 @@
 
 			if(!isset($array[$timeClass[$key]['matterCode']]['matterPeriod']))
 				$array[$timeClass[$key]['matterCode']]['matterPeriod'] = $timeClass[$key]['matterPeriod'];
+
+				$array[$timeClass[$key]['matterCode']]['matterColor'] = getColorPeriod($array[$timeClass[$key]['matterCode']]['matterPeriod']);
 
 		}
 
