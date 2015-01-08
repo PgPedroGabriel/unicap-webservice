@@ -4,24 +4,24 @@
 	function getColorPeriod($period){
 		$array = array();
 
-		$array['01'] = "#FFA4C400";
-		$array['02'] = "#FF60A917";
-		$array['03'] = "#FF00ABA9";
-		$array['04'] = "#FF1BA1E2";
-		$array['05'] = "#FFAA00FF";
-		$array['06'] = "#FFE51400";
-		$array['07'] = "#FFFA6800";
-		$array['08'] = "#FF76608A";
-		$array['09'] = "#FFF472D0";
-		$array['10'] = "#FFD80073";
-		$array['11'] = "#FF7A3B3F";
-		$array['12'] = "#FFA20025";
-		$array['13'] = "#FF008A00";
+		$array['01'] = "155,205,255";
+		$array['02'] = "156,160,198";
+		$array['03'] = "59,102,137";
+		$array['04'] = "255,179,181";
+		$array['05'] = "169,182,172";
+		$array['06'] = "239,233,238";
+		$array['07'] = "3,108,156";
+		$array['08'] = "158,190,166";
+		$array['09'] = "155,205,255";
+		$array['10'] = "156,160,198";
+		$array['11'] = "59,102,137";
+		$array['12'] = "255,179,181";
+		$array['13'] = "169,182,172";
 
 		if(isset($array[$period]))
 			return $array[$period];
 		else
-			return "#FFE51400";
+			return "155,205,255";
 	}
 
 	function printJson($status = false, $message = "Ocorreu um erro", $data = array()){
@@ -308,6 +308,61 @@
 		return $arrayDays;
 
 	}
+
+	function generateMattersCoursed($content)
+	{
+		preg_match_all('/<table border=1 width="100%" height=15 cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$content, $table);
+		preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$table[1][0], $matterInformations);
+		preg_match_all('/<td align="left"   class="tab_texto">([^`]*?)<\/td>/',$table[1][0], $matterName);
+
+		$array = array();
+
+		$count = 1;
+
+		foreach (array_chunk($matterName[1], 2) as $key => $matter){
+			$array[$key]['matterCode'] = $matter[0]; 
+			$array[$key]['matterName'] = trim($matter[1]); 
+		}
+		foreach (array_chunk($matterInformations[1], 3) as $key => $value) {
+			if($key == 0){
+				$period = (int) $value[0];
+			} else {
+				if($period < (int) $value[0]){
+					$period = (int) $value[0];
+					$count ++;
+				}
+			}
+			$array[$key]['matterPeriodCoursed'] = ($count < 10) ? '0'.$count : $count;
+			$array[$key]['matterPeriodNote'] = $value[1];
+			$array[$key]['matterPeriodSituation'] = ($value[2] == 'AP') ? 'Aprovado' : 'Reprovado';
+		}
+
+		return $array;
+	}
+
+
+	function generateMattersToCourse($content)
+	{
+
+		preg_match_all('/<table border=1 width="100%" height=15 cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$content, $table);
+		preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$table[1][0], $matterInformations);
+		preg_match_all('/<td align="left"   class="tab_texto">([^`]*?)<\/td>/',$table[1][0], $matterName);
+
+		$array = array();
+
+		$count = 1;
+
+		foreach (array_chunk($matterName[1], 2) as $key => $matter){
+			$array[$key]['matterCode'] = $matter[0]; 
+			$array[$key]['matterName'] = trim($matter[1]); 
+		}
+		foreach (array_chunk($matterInformations[1], 5) as $key => $value) {
+			$array[$key]['matterPeriodCoursed'] = $value[0];
+		}
+
+		return $array;
+	}
+
 
 	function generateMatterData($testCalendar, $periodNotes, $timeClass)
 	{

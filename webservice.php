@@ -81,8 +81,18 @@
 
 		$matterData = generateMatterData($testCalendar, $periodNotes, $timeClass);
 
+		$result = getContentRotines($result['hash'], 5);
+
+		$matterCoursed = generateMattersCoursed($result['content']);
+
+		$result = getContentRotines($result['hash'], 6);
+
+		$matterToCourse = generateMattersToCourse($result['content']);
+
 		printJson(true, "Sucesso", array('userData' => $userPersonalData, 
-										 'matterData' => $matterData));
+										 'matterData' => $matterData,
+										 'matterCoursed' => $matterCoursed,
+										 'matterToCourse' => $matterToCourse));
 
 	} else {
 		printJson();
