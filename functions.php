@@ -176,6 +176,18 @@
 
 	}
 
+	function getStaticTest(){
+		$array = array();
+
+		$array['firstGq'] = trim(utf8_encode("Ainda nao informado"));
+		$array['firstGq2Call'] = trim(utf8_encode("Ainda nao informado"));
+		$array['secondGq'] = trim(utf8_encode("Ainda nao informado"));
+		$array['final'] = trim(utf8_encode("Ainda nao informado"));
+		$array['final2Call'] = trim(utf8_encode("Ainda nao informado"));
+
+		return $array;
+	}
+
 	function getPeriodNotes($content)
 	{
 		
@@ -185,7 +197,6 @@
 		$array = array();
 
 		$i = 0;
-
 		$arrayChunck = array_chunk($matterInformations[1], 8);
 
 		foreach ($arrayChunck as $key => $arrayMatter) {
@@ -202,8 +213,6 @@
 		}
 
 		return $array;
-
-
 	}
 
 	function getTimeClass($content)
@@ -369,11 +378,11 @@
 
 		$array = array();
 
-		foreach ($testCalendar as $key => $matter) {
+		foreach ($timeClass as $key => $matter) {
 
 			$array[$matter['matterCode']]['name'] 			  = $matter['matterName'];
 			$array[$matter['matterCode']]['class'] 			  = $matter['matterClass'];
-			$array[$matter['matterCode']]['testInformations'] = $matter['testInformations'];
+			$array[$matter['matterCode']]['testInformations'] = (isset($testCalendar[$key])) ? $testCalendar[$key]['testInformations'] : getStaticTest();
 			$array[$matter['matterCode']]['initialLetters']   = "";
 
 			$words = preg_split("/[\s,_-]+/", $matter['matterName']);
@@ -420,6 +429,7 @@
 		foreach ($array as $key => $value) {
 			$new_array[$index] = $value;
 			$new_array[$index]['matterCode'] = $key;
+			$new_array['codes'][] = $key;
 			$index++;
 		}
 

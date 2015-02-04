@@ -89,6 +89,14 @@
 
 		$matterToCourse = generateMattersToCourse($result['content']);
 
+
+		foreach ($matterToCourse as $key => $value) {
+			if(in_array($value['matterCode'], $matterData['codes']))
+				unset($matterToCourse[$key]);
+		}
+
+		unset($matterData['codes']);
+
 		printJson(true, "Sucesso", array('userData' => $userPersonalData, 
 										 'matterData' => $matterData,
 										 'matterCoursed' => $matterCoursed,
