@@ -166,7 +166,7 @@
 			$array[$i]['testInformations']['firstGq2Call'] = trim(utf8_encode($arrayChunck[$key][3]));
 			$array[$i]['testInformations']['secondGq'] = trim(utf8_encode($arrayChunck[$key][4]));
 			$array[$i]['testInformations']['final'] = trim(utf8_encode($arrayChunck[$key][5]));
-			$array[$i]['testInformations']['final2Call'] = trim(utf8_encode($arrayChunck[$key][6]));
+			$array[$i]['testInformations']['final2Call'] = trim(utf8_encode($arrayChunck[$key][6]));	
 
 			$i++;
 		}
@@ -208,7 +208,8 @@
 			$array[$i]['noteInformations']['final'] = trim(utf8_encode($arrayMatter[5]));
 			$array[$i]['noteInformations']['finalAverage'] = trim(utf8_encode($arrayMatter[6]));
 			$array[$i]['noteInformations']['finalSituation'] = trim(utf8_encode(strip_tags($arrayMatter[7])));
-
+			if( $array[$i]['noteInformations']['finalSituation'] == "&nbsp;")
+				$array[$i]['noteInformations']['finalSituation'] = "--";
 			$i++;
 		}
 
