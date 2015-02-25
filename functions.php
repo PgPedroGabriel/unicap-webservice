@@ -309,11 +309,13 @@
 		$arrayChunck = array_chunk($timeInformations[1], 20);
 
 		foreach ($arrayChunck[1] as $days) {
-			$day = explode("=", trim(strip_tags($days)));
-			if(isset($day[1]))
-				$arrayDays[trim($day[1])] = trim($day[0]);
-		}
 
+			$day = explode("=", trim(strip_tags($days)));
+			
+			if(isset($day[1]))
+				//$arrayDays[trim($day[1])] = trim($day[0]);
+				$arrayDays[trim($day[1])] = trim($day[1]);
+		}
 
 		return $arrayDays;
 
