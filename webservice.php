@@ -1,4 +1,4 @@
-<?php  
+<?php
 
 	/* Rotinas executadas pelo site
 	* 1 - Home do aluno
@@ -25,6 +25,9 @@
 	// $digit = '0';
 	// $pass = '132513';
 
+
+	//2014109540
+	//155428
 
 	$ch = curl_init();
 	$timeout = 0;
@@ -66,7 +69,7 @@
 		$result = getContentRotines($urlHash, 2); // Dados pessoais
 
 		$userPersonalData = getUserPersonalData($result['content']);
-		
+
 		$result = getContentRotines($result['hash'], 3);
 
 		$testCalendar = getTestCalendar($result['content']);
@@ -97,7 +100,7 @@
 
 		unset($matterData['codes']);
 
-		printJson(true, "Sucesso", array('userData' => $userPersonalData, 
+		printJson(true, "Sucesso", array('userData' => $userPersonalData,
 										 'matterData' => $matterData,
 										 'matterCoursed' => $matterCoursed,
 										 'matterToCourse' => $matterToCourse));
