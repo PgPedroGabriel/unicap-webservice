@@ -137,6 +137,19 @@ class ServerOutput
             $result[$i]['matterRoom'] = "Bloco ".$matterRoomString[0].", sala ".$matterRoomString;
             $result[$i]['matterRoomShort'] = $matterRoomString;
 
+            $result[$i]['initialLetters']   = "";
+
+            $words = preg_split("/[\s,_-]+/", $result[$i]['matterName']);
+
+            foreach ($words as $index => $word) {
+              if(count($words) == 1)
+                $result[$i]['initialLetters']   .= $word[0].$word[1];
+              else if(count($words) >= 2 && ($index == 2 || $index == 0) )
+                $result[$i]['initialLetters']   .= $word[0];
+              else if(count($words) == 2)
+                $result[$i]['initialLetters']   .= $word[0];
+            }
+
             $timeExploded = explode(" ",trim($arrayMatter[4]));
 
             /*
