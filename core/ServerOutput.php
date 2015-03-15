@@ -69,19 +69,22 @@ class ServerOutput
         preg_match_all('/<table width="100%" border="0" height="140" cellspacing="0" align="center">([^`]*?)<\/table>/',$this->getHtml(), $tableContent); // Tabela principal
 
         if(!isset($tableContent[1][0]))
-            JsonResult::error("Falha em pegar dados pessoais");
+            JsonResult::error("Senha incorreta.");
 
         preg_match_all('/<td.*?>([^`]*?)<\/td>/',$tableContent[1][0], $tdText); // Tds da tabela
 
         if(!isset($tdText[1]))
-            JsonResult::error("Falha em pegar dados pessoais");
+            JsonResult::error("Senha incorreta.");
 
         $result = array();
         $arrayChunck = array_chunk($tdText[1], 2); // Divide array on pieces | Type, Value
 
         foreach ($arrayChunck as $key => $value) {
-            if(isset($value[0]) && isset($value[1]) && !empty(Helper::clearHtml($value[0])))
-                $result[Helper::clearHtml($value[0])] = Helper::clearHtml($value[1]);
+            if(isset($value[0]) && isset($value[1])){
+                $type = Helper::clearHtml($value[0]);
+                if(!empty($type))
+                    $result[$type] = Helper::clearHtml($value[1]);
+            }
 
         }
 

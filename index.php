@@ -7,6 +7,7 @@
  */
 
 include_once './core/autoload.php';
+error_reporting(E_ALL);
 
 $core = new Core();
 $core->verifyMethod();
