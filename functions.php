@@ -1,5 +1,5 @@
-<?php  
-	
+<?php
+
 
 	function getColorPeriod($period){
 		$array = array();
@@ -132,7 +132,7 @@
 					$array["Filiação"][] = utf8_encode(trim($value[1])) ;
 				else
 					$array[utf8_encode(trim($value[0]))] = utf8_encode(trim($value[1])) ;
-			} 
+			}
 		}
 
 		return $array;
@@ -142,7 +142,7 @@
 
 	function getTestCalendar($content)
 	{
-		
+
 		preg_match_all('/<table align="center" border="1" width="100%" cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$content, $tableTestInformations);
 		preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$tableTestInformations[1][0], $matterInformations);
 		preg_match_all('/<td align="left"   class="tab_texto">([^`]*?)<\/td>/',$tableTestInformations[1][0], $matterName);
@@ -166,7 +166,7 @@
 			$array[$i]['testInformations']['firstGq2Call'] = trim(utf8_encode($arrayChunck[$key][3]));
 			$array[$i]['testInformations']['secondGq'] = trim(utf8_encode($arrayChunck[$key][4]));
 			$array[$i]['testInformations']['final'] = trim(utf8_encode($arrayChunck[$key][5]));
-			$array[$i]['testInformations']['final2Call'] = trim(utf8_encode($arrayChunck[$key][6]));	
+			$array[$i]['testInformations']['final2Call'] = trim(utf8_encode($arrayChunck[$key][6]));
 
 			$i++;
 		}
@@ -190,7 +190,7 @@
 
 	function getPeriodNotes($content)
 	{
-		
+
 		preg_match_all('/<table border="1" width="100%" cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$content, $tableTestInformations);
 		preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$tableTestInformations[1][0], $matterInformations);
 
@@ -224,7 +224,7 @@
 		preg_match_all('/<td.*?>([^`]*?)<\/td>/',$tableTimeInformation[1][0], $timeInformations);
 
 		$array = array();
-		
+
 		$i = 0;
 
 		$arrayChunck = array_chunk($matterInformations[1], 8);
@@ -241,7 +241,7 @@
 			$array[$i]['matterCode'] = trim(utf8_encode($arrayMatter[0]));
 			$array[$i]['matterName'] = trim(utf8_encode($arrayMatter[1]));
 			$array[$i]['matterClass'] = trim(utf8_encode($arrayMatter[2]));
-			
+
 			$matterRoomString = trim(utf8_encode($arrayMatter[3]));
 
 			$array[$i]['matterRoom'] = "Bloco ".$matterRoomString[0].", sala ".$matterRoomString;
@@ -256,7 +256,7 @@
 
 			$array[$i]['matterTime'] = trim(utf8_encode($arrayMatter[4]));
 			$array[$i]['matterPeriod'] = trim(utf8_encode($arrayMatter[7]));
-			
+
 			$i++;
 		}
 
@@ -264,12 +264,12 @@
 	}
 
 	function checkTime($content){
-		
+
 		preg_match_all('/<table width="100%%" border="0">([^`]*?)<\/table>/',$content, $tableTimeInformation);
 		preg_match_all('/<td.*?>([^`]*?)<\/td>/',$tableTimeInformation[1][0], $timeInformations);
-		
+
 		$arrayChunck = array_chunk($timeInformations[1], 20);
-		
+
 		// $arrayDays  = array();
 		$arrayHours = array();
 		// $result     = array();
@@ -295,7 +295,7 @@
 		// $result[$arrayDays[$string[0]]] = $arrayHours[$string[1]];
 
 		// return $result;
-	
+
 	}
 
 
@@ -305,13 +305,13 @@
 		preg_match_all('/<td.*?>([^`]*?)<\/td>/',$tableTimeInformation[1][0], $timeInformations);
 
 		$arrayDays  = array();
-		
+
 		$arrayChunck = array_chunk($timeInformations[1], 20);
 
 		foreach ($arrayChunck[1] as $days) {
 
 			$day = explode("=", trim(strip_tags($days)));
-			
+
 			if(isset($day[1]))
 				//$arrayDays[trim($day[1])] = trim($day[0]);
 				$arrayDays[trim($day[1])] = trim($day[1]);
@@ -332,8 +332,8 @@
 		$count = 1;
 
 		foreach (array_chunk($matterName[1], 2) as $key => $matter){
-			$array[$key]['matterCode'] = $matter[0]; 
-			$array[$key]['matterName'] = trim($matter[1]); 
+			$array[$key]['matterCode'] = $matter[0];
+			$array[$key]['matterName'] = trim($matter[1]);
 		}
 		foreach (array_chunk($matterInformations[1], 3) as $key => $value) {
 			if($key == 0){
@@ -365,8 +365,8 @@
 		$count = 1;
 
 		foreach (array_chunk($matterName[1], 2) as $key => $matter){
-			$array[$key]['matterCode'] = $matter[0]; 
-			$array[$key]['matterName'] = trim($matter[1]); 
+			$array[$key]['matterCode'] = $matter[0];
+			$array[$key]['matterName'] = trim($matter[1]);
 		}
 		foreach (array_chunk($matterInformations[1], 5) as $key => $value) {
 			$array[$key]['matterPeriodCoursed'] = $value[0];
@@ -403,15 +403,15 @@
 
 			$array[$timeClass[$key]['matterCode']]['matterRoom']   = $timeClass[$key]['matterRoom'];
 			$array[$timeClass[$key]['matterCode']]['matterRoomShort']   = $timeClass[$key]['matterRoomShort'];
-		
+
 			if(isset($array[$timeClass[$key]['matterCode']]['days']) ) {
-		
+
 				$array[$timeClass[$key]['matterCode']]['days']         = array_merge($array[$timeClass[$key]['matterCode']]['days'], $timeClass[$key]['days']);
-		
+
 			} else {
-				
+
 				$array[$timeClass[$key]['matterCode']]['days']         = $timeClass[$key]['days'];
-		
+
 			}
 			if(isset($array[$timeClass[$key]['matterCode']]['matterTime']))
 				$array[$timeClass[$key]['matterCode']]['matterTime'] .= ' '.$timeClass[$key]['matterTime'];

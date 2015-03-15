@@ -6,10 +6,15 @@
  * @return json
  */
 
-/*
-* Valida post
-*/
-
 include_once './core/autoload.php';
-header('Content-type: application/json');
-echo $core->getJsonEncoded();
+
+$core = new Core();
+$core->verifyMethod();
+$core->verifyPostParams();
+
+$request = new Request();
+$request->login($core->getMat(), $core->getPass());
+$core->setUserData($request->getUserData());
+$core->setMatterData($request->getMatterData());
+
+JsonResult::success($core->getFullData());

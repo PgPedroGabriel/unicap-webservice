@@ -14,7 +14,7 @@ abstract class JsonResult
         self::printJson($result);
     }
 
-    static function success($data, $message){
+    static function success($data, $message = "Sucesso"){
        $result = new stdClass();
        $result->status = true;
        $result->message = $message;
@@ -23,7 +23,7 @@ abstract class JsonResult
     }
 
     static function printJson($result){
-        header('Content-type: application/json');
+        header('Content-type: application/json; charset=utf-8');
         echo json_encode($result);
         exit(0);
     }

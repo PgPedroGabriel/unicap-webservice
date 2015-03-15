@@ -1,26 +1,70 @@
 <?php
-class Request  {
+/**
+ * @author Pedro Gabriel
+ * Classse que faz comunicação entre servidor da católica e faz requisições de suas rotinas
+    * Rotinas executadas pelo site
+    * 1 - Home do aluno (Responsável também pelo Login)
+    * 2 - Dados pessoais
+    * 3 - Calendario de provas
+    * 4 - Notas do periodo
+    * 14 - Disciplinas do periodo
+    * 5 - Disciplinas cursadas
+    * 7 - Disciplinas Eletivas da unicap
+    * 6 - Disciplinas a cursar
+    * 8 - Disciplinas Eletivas do curso
+    * 9 - Disciplinas eletivas do departamento
+    * 10 - Atividades complementares
+ */
+
+class Request
+{
 
     private $url;
     public static $staticUrl = "http://www.unicap.br/PortalGraduacao/";
     private $curlHandler;
     private $session;
+    private $serverOutput;
+    private $mat;
+    private $pass;
 
-    public function __construct($url = null)
+    public function __construct()
     {
-        if($url)
-            $this->url = $url;
-        else
-            $this->url = $staticUrl;
-
-        $this->curlHandler = curl_init();
-        self::startCurlConfig();
+        $this->prepareCurl();
     }
 
-    public function setSession($session)
+    public function prepareCurl($url = "", $postParams = "")
     {
-        $this->session = $session;
+        if(!empty($url))
+            $this->url = self::$staticUrl.$url;
+        else
+            $this->url = self::$staticUrl;
+
+        $this->curlHandler = curl_init();
+        curl_setopt($this->curlHandler, CURLOPT_URL, $this->url);
+        curl_setopt($this->curlHandler, CURLOPT_POST, 1);
+        curl_setopt($this->curlHandler, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->curlHandler, CURLOPT_CONNECTTIMEOUT, 0);
+
+        if(!empty($postParams))
+            curl_setopt($this->curlHandler, CURLOPT_POSTFIELDS, $postParams);
+
+        return;
+    }
+
+    public function getServerOutput()
+    {
+        return $this->serverOutput;
+    }
+
+    public function setSession()
+    {
+        $this->session = $this->serverOutput->getSessionHash();
         return $this;
+    }
+
+    public function getSession()
+    {
+        return $this->session;
     }
 
     public function hasSession()
@@ -28,47 +72,70 @@ class Request  {
         return !empty($this->session);
     }
 
-    public function startCurlConfig()
-    {
-        curl_setopt($this->curlHandler, CURLOPT_URL, $this->url);
-        curl_setopt($this->curlHandler, CURLOPT_POST, 1);
-        curl_setopt($this->curlHandler, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curlHandler, CURLOPT_CONNECTTIMEOUT, 0);
-
-        return;
-    }
-
     public function login($mat, $pass, $digit = '5')
     {
 
-         if(self::$hasSession)
+         if($this->hasSession())
              JsonResult::error("Você ja esta logado!");
 
-         $output = self::run();
-         preg_match_all('/<form method=\'post\' action=\'([^`]*?)\'/',$server_output, $conteudo);
+         $this->run();
+         $this->mat = $mat;
+         $this->pass = $pass;
 
-         curl_setopt($this->curlHandler, CURLOPT_POSTFIELDS, "Matricula=$mat&Digito=$digit&Senha=$pass&rotina=1");
-         $output = self::run();
-         preg_match_all('/<form method=\'post\' action=\'([^`]*?)\'/',$output, $actionSession);
-         if(isset($actionSession[1][0])) {
-            self::setSession($actionSession[1][0]);
-         die('ae');
-            return $this;
-        } else
-            JsonResult::error("Falha ao se conectar com o portal do aluno.");
-
-    }
-
-    public function setCurlPost($param = "")
-    {
-         curl_setopt($this->curlHandler, CURLOPT_POSTFIELDS, $param);
-         return $this;
+         $this->prepareCurl($this->getSession(), $this->commonPost("1")); // Home do aluno (Responsável também pelo Login)
+         $this->run();
     }
 
     public function run()
     {
-         $server_output = curl_exec ($this->curlHandler);
+         $html = curl_exec ($this->curlHandler);
          curl_close($this->curlHandler);
-         return $server_output;
+         $this->serverOutput = new ServerOutput($html);
+         $this->setSession();
+         return;
+    }
+
+    public function getUserData()
+    {
+        $this->prepareCurl($this->getSession(), $this->commonPost("2")); //Dados pessoais
+        $this->run();
+        return $this->serverOutput->userContent();
+    }
+
+    public function commonPost($routine)
+    {
+        return "Matricula=".$this->mat."&Digito=5&Senha=".$this->pass."&rotina=".$routine;
+    }
+
+
+    public function getMatterData()
+    {
+        $this->prepareCurl($this->getSession(), $this->commonPost("14")); //Disciplinas do periodo
+        $this->run();
+
+        $basicDataFromMatters = $this->serverOutput->getMattersBasicData();
+
+        $this->prepareCurl($this->getSession(), $this->commonPost("3")); // Calendário de provas
+        $this->run();
+
+        $mattersCalendar = $this->serverOutput->getMattersCalendar();
+
+        $this->prepareCurl($this->getSession(), $this->commonPost("4")); // Notas do periodo
+        $this->run();
+
+        $mattersNotes = $this->serverOutput->getMattersNotes();
+
+
+        /**
+        * Merge arrays
+        */
+
+        foreach ($basicDataFromMatters as $key => $value) {
+                $basicDataFromMatters[$key]['testInformations'] = $mattersCalendar[$value["matterCode"]];
+                $basicDataFromMatters[$key]['noteInformations'] = $mattersNotes[$value["matterCode"]];
+        }
+
+        return $basicDataFromMatters;
+
     }
 }
