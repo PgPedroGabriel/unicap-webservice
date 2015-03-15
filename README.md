@@ -8,9 +8,9 @@ Usando Advanced Rest Client (google chrome app)
 
 ##Exemplo de dados:
 
-![Link localhost metodo Post](./images/usage1.jpg "Link localhost metodo Post")
-![Dados do usuário](./images/usage2.jpg "Usuário")
-![Dados de uma matéria](./images/usage3.jpg "Matéria")
+![Link localhost metodo Post](./images/usage1.png "Link localhost metodo Post")
+![Dados do usuário](./images/usage2.png "Usuário")
+![Dados de uma matéria](./images/usage3.png "Matéria")
 
 
-###Fork me and contribute.
+#####Fork me and contribute.
