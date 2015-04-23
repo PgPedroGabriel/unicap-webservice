@@ -17,5 +17,6 @@ $request = new Request();
 $request->login($core->getMat(), $core->getPass());
 $core->setUserData($request->getUserData());
 $core->setMatterData($request->getMatterData());
+$core->setDockets($request->getDocketsData());
 
 JsonResult::success($core->getFullData());

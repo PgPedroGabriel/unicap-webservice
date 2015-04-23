@@ -16,7 +16,8 @@ class Core
     private $pass;
     private $userData;
     private $matterData;
-
+    private $dockets;
+    private $docketVia = null;
 
     /**
     * Verify if is a post method
@@ -57,6 +58,26 @@ class Core
         }
     }
 
+    public function verifyPostParamsDocket()
+    {
+        self::verifyPostParams();
+
+        $docketVia = @$_POST['docket_via'];
+
+        if(empty($docketVia))
+            JsonResult::error();
+        else{
+
+            $docketVia = (int)$docketVia;
+
+            if($docketVia < 1 || $docketVia > 12)
+                JsonResult::error("Numero da parcela inválido");
+
+            $this->_setDocketVia($docketVia);
+            return;
+        }
+    }
+
     public function getMat()
     {
         return $this->mat;
@@ -82,8 +103,32 @@ class Core
         $this->matterData = $data;
     }
 
+    public function setDockets($value='')
+    {
+        $this->dockets = $value;
+        return $this;
+    }
+
+    public function getDocketVia()
+    {
+        return $this->docketVia;
+    }
+
+    private function _setDocketVia($value = null)
+    {
+        if(!empty($value) && $value > 1 && $value < 13)
+            $this->docketVia = $value;
+
+        return $this;
+    }
+
+    public function getDockets()
+    {
+        return $this->dockets;
+    }
+
     public function getFullData()
     {
-        return array('userData' => $this->userData, 'matterData' => $this->matterData) ;
+        return array('userData' => $this->userData, 'matterData' => $this->matterData, 'docketsData' => $this->dockets) ;
     }
 }

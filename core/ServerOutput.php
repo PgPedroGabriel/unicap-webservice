@@ -40,6 +40,11 @@ class ServerOutput
         return;
     }
 
+    public function getHtmlDecoded()
+    {
+        return utf8_decode($this->html);
+    }
+
     public function getHtml()
     {
         return $this->html;
@@ -54,7 +59,6 @@ class ServerOutput
     public function getSessionHash()
     {
         preg_match_all('/<form method=\'post\' action=\'([^`]*?)\'/',$this->getHtml(), $activeSession);
-
         if(isset($activeSession[1][0]))
             return $activeSession[1][0];
         else
@@ -65,7 +69,6 @@ class ServerOutput
 
     public function userContent()
     {
-
         preg_match_all('/<table width="100%" border="0" height="140" cellspacing="0" align="center">([^`]*?)<\/table>/',$this->getHtml(), $tableContent); // Tabela principal
 
         if(!isset($tableContent[1][0]))
@@ -141,9 +144,21 @@ class ServerOutput
 
             $words = preg_split("/[\s,_-]+/", $result[$i]['matterName']);
 
+            $lastWord = $words[count($words)-1];
+
+            preg_match('/(IX|IV|V?I{0,3})/i', $lastWord, $matches);
+
+            if(!empty($matches[0])){
+                $oldName = $result[$i]['matterName'];
+                $result[$i]['matterName'] = @substr($result[$i]['matterName'], 0, strpos($result[$i]['matterName'], $matches[0])).mb_strtoupper($matches[0]);
+                if(empty($result[$i]['matterName']) || $result[$i]['matterName'] == null){
+                    $result[$i]['matterName'] = $oldName;
+                }
+            }
+
             foreach ($words as $index => $word) {
               if(count($words) == 1)
-                $result[$i]['initialLetters']   .= $word[0].$word[1];
+                $result[$i]['initialLetters']   .= $word[0].mb_strtoupper($word[1]);
               else if(count($words) >= 2 && ($index == 2 || $index == 0) )
                 $result[$i]['initialLetters']   .= $word[0];
               else if(count($words) == 2)
@@ -314,6 +329,36 @@ class ServerOutput
             $result[$matterCode]['finalAverage'] = Helper::clearHtml($arrayMatter[6]);
             $result[$matterCode]['finalSituation'] = Helper::clearHtml($arrayMatter[7]);
         }
+        return $result;
+    }
+
+    public function getDockets()
+    {
+
+        preg_match_all('/<table width="100%" border="0" cellspacing="0" cellpadding="3" align="center">([^`]*?)<\/table>/',$this->getHtml(), $tableDockets);
+
+        if (!isset($tableDockets[1][0]))
+            JsonResult::error("Falha em baixar os boletos de pagamento.");
+
+        preg_match_all('/<td width="(.*) align="center" class="tab_texto">([^`]*?)<\/td>/',$tableDockets[1][0], $dockets);
+
+        if (!isset($dockets[2]))
+            JsonResult::error("Falha em x os boletos de pagamento.");
+
+
+        $result = array();
+        $arrayChunck = array_chunk($dockets[2], 3);
+
+        setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
+        date_default_timezone_set('America/Sao_Paulo');
+
+        foreach ($arrayChunck as $docket) {
+
+            if(isset($docket[1])){
+                $result[] = array('Vencimento' => $docket[2], 'Mês' => Helper::getMesExtenso($docket[1]), 'Parcela' => $docket[1]);
+            }
+        }
+
         return $result;
     }
 

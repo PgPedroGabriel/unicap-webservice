@@ -14,6 +14,8 @@
     * 8 - Disciplinas Eletivas do curso
     * 9 - Disciplinas eletivas do departamento
     * 10 - Atividades complementares
+    * 11 - imprimir boletos
+    * 12 - emitir via do boleto
  */
 
 class Request
@@ -86,12 +88,17 @@ class Request
          $this->run();
     }
 
-    public function run()
+    public function run($setSession = true)
     {
          $html = curl_exec ($this->curlHandler);
+
          curl_close($this->curlHandler);
+
          $this->serverOutput = new ServerOutput($html);
-         $this->setSession();
+
+         if($setSession)
+            $this->setSession();
+
          return;
     }
 
@@ -125,7 +132,6 @@ class Request
 
         $mattersNotes = $this->serverOutput->getMattersNotes();
 
-
         /**
         * Merge arrays
         */
@@ -137,5 +143,34 @@ class Request
 
         return $basicDataFromMatters;
 
+    }
+
+
+    public function getDocketsData()
+    {
+        $this->prepareCurl($this->getSession(), $this->commonPost("11"));
+        $this->run();
+
+        $docketsContent = $this->serverOutput->getDockets();
+
+        return $docketsContent;
+    }
+
+
+    public function downloadDocket($number = null)
+    {
+
+        if($number == null)
+            JsonResult::error("Falha em fazer o download do boleto.");
+
+        $this->prepareCurl($this->getSession(), $this->commonPost("12")."&Parcela=".$number);
+        $this->run(false);
+
+        header('Cache-Control: public');
+        header('Content-type: application/pdf');
+        header('Content-Disposition: attachment; filename="new.pdf"');
+        header('Content-Length: '.strlen($this->serverOutput->getHtmlDecoded()));
+
+        echo $this->serverOutput->getHtmlDecoded();
     }
 }
