@@ -183,7 +183,22 @@ class ServerOutput
             foreach ($timeExploded as $key => $value) {
                 for($j = 1; $j < strlen($value); $j++)
                     $result[$i]['days'][$days[$value[0]]][] = $schedules[$value[$j]];
+
+                $quantityHoraries = count($result[$i]['days'][$days[$value[0]]]);
+
+                if($quantityHoraries > 1){
+                    $firstHorary = $result[$i]['days'][$days[$value[0]]][0];
+                    $lastHorary = end($result[$i]['days'][$days[$value[0]]]);
+
+                    $explodeFirstHorary = explode('-', $firstHorary);
+                    $explodeLastHorary = explode('-', $lastHorary);
+
+                    if(isset($explodeFirstHorary[0]) && isset($explodeLastHorary[1]))
+                        $result[$i]['days'][$days[$value[0]]] = $explodeFirstHorary[0].'às'.$explodeLastHorary[1];
+                }
+
             }
+
 
             $result[$i]['matterTime'] = Helper::clearHtml($arrayMatter[4]);
             $result[$i]['matterPeriod'] = Helper::clearHtml($arrayMatter[7]);
