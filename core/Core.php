@@ -16,6 +16,8 @@ class Core
     private $pass;
     private $userData;
     private $matterData;
+    private $toCourseMatters;
+    private $coursedMatters;
     private $dockets;
     private $docketVia = null;
 
@@ -129,6 +131,38 @@ class Core
 
     public function getFullData()
     {
-        return array('userData' => $this->userData, 'matterData' => $this->matterData, 'docketsData' => $this->dockets) ;
+        return array('userData' => $this->userData,
+                    'matterData' => $this->matterData,
+                    'docketsData' => $this->dockets,
+                    'toCourseMatters' => $this->toCourseMatters,
+                    'coursedMatters' => $this->coursedMatters) ;
+    }
+
+    public function setToCourseMatters($matters)
+    {
+
+        $this->toCourseMatters = $matters;
+
+        return $this;
+    }
+
+    public function getMattersCodes()
+    {
+        $result = array();
+
+        foreach ($this->matterData as $key => $value) {
+
+            $result[$value['matterCode']] = true;
+        }
+
+        return $result;
+    }
+
+
+    public function setCoursedMatters($matters)
+    {
+        $this->coursedMatters = $matters;
+
+        return $this;
     }
 }

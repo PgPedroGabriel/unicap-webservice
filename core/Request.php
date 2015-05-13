@@ -156,6 +156,26 @@ class Request
         return $docketsContent;
     }
 
+    public function getToCourseMatters($cursingMatters = array())
+    {
+        $this->prepareCurl($this->getSession(), $this->commonPost('6'));
+        $this->run();
+
+        $toCourseContent = $this->serverOutput->getToCourseMatters($cursingMatters);
+
+        return $toCourseContent;
+    }
+
+    public function getCoursedMatters($cursingMatters = array())
+    {
+        $this->prepareCurl($this->getSession(), $this->commonPost('5'));
+        $this->run();
+
+        $coursed = $this->serverOutput->getCoursedMatters($cursingMatters);
+
+        return $coursed;
+    }
+
 
     public function downloadDocket($number = null)
     {

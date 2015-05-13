@@ -15,8 +15,12 @@ $core->verifyPostParams();
 
 $request = new Request();
 $request->login($core->getMat(), $core->getPass());
+
 $core->setUserData($request->getUserData());
 $core->setMatterData($request->getMatterData());
-$core->setDockets($request->getDocketsData());
+// $core->setDockets($request->getDocketsData());
+$core->setToCourseMatters($request->getToCourseMatters($core->getMattersCodes()));
+$core->setCoursedMatters($request->getCoursedMatters());
+
 
 JsonResult::success($core->getFullData());

@@ -35,6 +35,49 @@ abstract class Helper
         return $arrayHours;
     }
 
+    static function upperRomanString($string)
+    {
+
+        $words = preg_split("/[\s,_-]+/", $string);
+
+        $lastWord = $words[count($words)-1];
+
+        preg_match('/(IX|IV|V?I{0,3})/i', $lastWord, $matches);
+
+        if(!empty($matches[0])){
+            $oldName = $string;
+            $string = @substr($string, 0, strpos($string, $matches[0])).mb_strtoupper($matches[0]);
+            if(empty($string) || $string == null){
+                $string = $oldName;
+            }
+        }
+
+        return $string;
+
+    }
+
+    static function getInitialLetters($string){
+
+        $words = preg_split("/[\s,_-]+/", $string);
+
+        $result = "";
+        foreach ($words as $index => $word) {
+          if(count($words) == 1 ){
+            if(!isset($word[1]))
+                $result .= $word[0];
+            else
+                $result   .= $word[0].mb_strtoupper($word[1]);
+          }
+          else if(count($words) >= 2 && ($index == 2 || $index == 0) )
+            $result   .= $word[0];
+          else if(count($words) == 2)
+            $result   .= $word[0];
+        }
+
+        return $result;
+
+    }
+
     static function clearHtml($value)
     {
             return ucwords(strtolower(trim(preg_replace("/&#?[a-z0-9]{2,8};/i","",  strip_tags($value)))));

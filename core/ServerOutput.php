@@ -132,7 +132,7 @@ class ServerOutput
         foreach($arrayChunck as $arrayMatter){
 
             $result[$i]['matterCode'] = Helper::clearHtml($arrayMatter[0]);
-            $result[$i]['matterName'] = Helper::clearHtml($arrayMatter[1]);
+            $result[$i]['matterName'] = Helper::upperRomanString(Helper::clearHtml($arrayMatter[1]));
             $result[$i]['matterClass'] = Helper::clearHtml($arrayMatter[2]);
 
             $matterRoomString = preg_replace('/\s+/', '-', Helper::clearHtml($arrayMatter[3]));
@@ -140,30 +140,8 @@ class ServerOutput
             $result[$i]['matterRoom'] = "Bloco ".$matterRoomString[0].", sala ".$matterRoomString;
             $result[$i]['matterRoomShort'] = $matterRoomString;
 
-            $result[$i]['initialLetters']   = "";
+            $result[$i]['initialLetters']   = Helper::getInitialLetters($result[$i]['matterName']);
 
-            $words = preg_split("/[\s,_-]+/", $result[$i]['matterName']);
-
-            $lastWord = $words[count($words)-1];
-
-            preg_match('/(IX|IV|V?I{0,3})/i', $lastWord, $matches);
-
-            if(!empty($matches[0])){
-                $oldName = $result[$i]['matterName'];
-                $result[$i]['matterName'] = @substr($result[$i]['matterName'], 0, strpos($result[$i]['matterName'], $matches[0])).mb_strtoupper($matches[0]);
-                if(empty($result[$i]['matterName']) || $result[$i]['matterName'] == null){
-                    $result[$i]['matterName'] = $oldName;
-                }
-            }
-
-            foreach ($words as $index => $word) {
-              if(count($words) == 1)
-                $result[$i]['initialLetters']   .= $word[0].mb_strtoupper($word[1]);
-              else if(count($words) >= 2 && ($index == 2 || $index == 0) )
-                $result[$i]['initialLetters']   .= $word[0];
-              else if(count($words) == 2)
-                $result[$i]['initialLetters']   .= $word[0];
-            }
 
             $timeExploded = explode(" ",trim($arrayMatter[4]));
 
@@ -364,8 +342,8 @@ class ServerOutput
         $result = array();
         $arrayChunck = array_chunk($dockets[2], 3);
 
-        setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
-        date_default_timezone_set('America/Sao_Paulo');
+        // setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
+        // date_default_timezone_set('America/Sao_Paulo');
 
         foreach ($arrayChunck as $docket) {
 
@@ -375,6 +353,90 @@ class ServerOutput
         }
 
         return $result;
+    }
+
+    public function getToCourseMatters($cursingMatters = array())
+    {
+
+        preg_match_all('/<table border=1 width="100%" height=15 cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$this->getHtml(), $tableToCourse);
+
+        if (!isset($tableToCourse[1][0]))
+            JsonResult::error("Falha em baixar as matérias a cursar.");
+
+        preg_match_all('/<td align="(.*) class="tab_texto">([^`]*?)<\/td>/',$tableToCourse[1][0], $toCourse);
+
+
+        if (!isset($toCourse[2]))
+            JsonResult::error("Falha em baixar as matérias a cursar. Contacte o desenvolvedor");
+
+
+        $result = array();
+        $arrayChunck = array_chunk($toCourse[2], 7);
+
+        foreach ($arrayChunck as $matter) {
+            $matterCode = Helper::clearHtml($matter[2]);
+
+            if(!isset($cursingMatters[$matterCode])) {
+
+                $matterName = Helper::upperRomanString(Helper::clearHtml($matter[4]));
+
+                $result[] = array('period' => Helper::clearHtml($matter[0]),
+                                'matterCode' => $matterCode,
+                                'name' => $matterName,
+                                'initialLetters' => Helper::getInitialLetters($matterName),
+                                'credits' => Helper::clearHtml($matter[5]),
+                                );
+            }
+        }
+
+        return $result;
+    }
+
+    public function getCoursedMatters()
+    {
+
+        preg_match_all('/<table border=1 width="100%" height=15 cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$this->getHtml(), $table);
+
+        if (!isset($table[1][0]))
+            JsonResult::error("Falha em baixar as matérias cursadas.");
+
+        preg_match_all('/<td align="(.*) class="tab_texto">([^`]*?)<\/td>/',$table[1][0], $coursed);
+
+
+        if (!isset($coursed[2]))
+            JsonResult::error("Falha em baixar as matérias cursadas. Contacte o desenvolvedor");
+
+        $result = array();
+        $arrayChunck = array_chunk($coursed[2], 5);
+
+        foreach ($arrayChunck as $matter) {
+
+            $period = str_split(Helper::clearHtml($matter[0]), 4);
+            if(isset($period[1]))
+                $period = "Cursada em ".$period[0]." no ".$period[1]."º Semestre";
+            else if(isset($period[0]))
+                $period = "Cursada em ".$period[0];
+            else
+                $period = "Cursada em ".Helper::clearHtml($matter[0]);
+
+            $matterCode = Helper::clearHtml($matter[1]);
+
+            $matterName = Helper::upperRomanString(Helper::clearHtml($matter[2]));
+
+            $situation = Helper::clearHtml($matter[4]);
+
+            $result[] = array('period' => $period,
+                            'matterCode' => $matterCode,
+                            'name' => $matterName,
+                            'initialLetters' => Helper::getInitialLetters($matterName),
+                            'average' => Helper::clearHtml($matter[3]),
+                            'yearComplet' => Helper::clearHtml($matter[0]),
+                            'situation' => $situation,
+                            );
+        }
+
+        return $result;
+
     }
 
 }
