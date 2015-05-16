@@ -35,14 +35,14 @@ abstract class Helper
         return $arrayHours;
     }
 
-    static function upperRomanString($string)
+    static function upperRomanString($string, $debug = false)
     {
 
         $words = preg_split("/[\s,_-]+/", $string);
 
         $lastWord = $words[count($words)-1];
 
-        preg_match('/(IX|IV|V?I{0,3})/i', $lastWord, $matches);
+        preg_match('/^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i', $lastWord, $matches);
 
         if(!empty($matches[0])){
             $oldName = $string;

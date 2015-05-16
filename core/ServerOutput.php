@@ -409,6 +409,7 @@ class ServerOutput
         $result = array();
         $arrayChunck = array_chunk($coursed[2], 5);
 
+
         foreach ($arrayChunck as $matter) {
 
             $period = str_split(Helper::clearHtml($matter[0]), 4);
@@ -423,6 +424,7 @@ class ServerOutput
 
             $matterName = Helper::upperRomanString(Helper::clearHtml($matter[2]));
 
+
             $situation = Helper::clearHtml($matter[4]);
 
             $result[] = array('period' => $period,
@@ -432,7 +434,7 @@ class ServerOutput
                             'average' => Helper::clearHtml($matter[3]),
                             'yearComplet' => Helper::clearHtml($matter[0]),
                             'situation' => $situation,
-                            );
+                        );
         }
 
         return $result;
