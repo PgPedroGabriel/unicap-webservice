@@ -2,7 +2,15 @@
 Webservice para consultar dados dos alunos da UNICAP.
 Codificação feita em PHP, com retorno de dados em JSON.
 Para usar instale o PHP 5.3 ou maior, Php5-curl.
+
+Use o composer para instalar o Autoload
+
+```
+$ php compser install
+```
+
 ##Sugestão para visualizar os dados
+
 Usando Advanced Rest Client (google chrome app)
 [Instalar aplicativo](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo?utm_source=chrome-ntp-icon)
 
