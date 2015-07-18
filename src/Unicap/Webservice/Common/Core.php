@@ -146,6 +146,19 @@ class Core
                     'coursedMatters' => $this->coursedMatters) ;
     }
 
+    public function serialize()
+    {
+        $data = array(  'mat' => $this->mat,
+                        'pass' => $this->pass,
+                        'userData' => $this->userData,
+                        'matterData' => $this->matterData,
+                        'docketsData' => $this->dockets,
+                        'toCourseMatters' => $this->toCourseMatters,
+                        'coursedMatters' => $this->coursedMatters ) ;
+
+        return serialize($data);
+    }
+
     public function setToCourseMatters($matters)
     {
 
