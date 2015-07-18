@@ -4,7 +4,8 @@
 *  Classe que contém algumas funções de tratamento de caso
  */
 
-abstract class Helper
+namespace Unicap\Webservice\Helper;
+abstract class StringHelper
 {
 
     static function getDays($arrayChunck) {

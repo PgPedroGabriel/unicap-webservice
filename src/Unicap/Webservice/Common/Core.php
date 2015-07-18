@@ -9,6 +9,10 @@
  * @return core object
  */
 
+namespace Unicap\Webservice\Common;
+
+use Unicap\Webservice\Helper\JsonResult;
+
 class Core
 {
 
@@ -20,6 +24,10 @@ class Core
     private $coursedMatters;
     private $dockets;
     private $docketVia = null;
+
+    function __construct() {
+
+    }
 
     /**
     * Verify if is a post method

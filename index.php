@@ -6,14 +6,14 @@
  * @return json
  */
 
-include_once './core/autoload.php';
-error_reporting(E_ALL);
+$loader = require 'vendor/autoload.php';
 
-$core = new Core();
+$core = new Unicap\Webservice\Common\Core();
+
 $core->verifyMethod();
 $core->verifyPostParams();
 
-$request = new Request();
+$request = new Unicap\Webservice\Server\Request();
 $request->login($core->getMat(), $core->getPass());
 
 $core->setUserData($request->getUserData());
@@ -23,4 +23,4 @@ $core->setToCourseMatters($request->getToCourseMatters($core->getMattersCodes())
 $core->setCoursedMatters($request->getCoursedMatters());
 
 
-JsonResult::success($core->getFullData());
+Unicap\Webservice\Helper\JsonResult::success($core->getFullData());

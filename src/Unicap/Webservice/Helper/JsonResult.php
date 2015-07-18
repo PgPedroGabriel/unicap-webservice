@@ -3,11 +3,12 @@
 * @author Pedro Gabriel
 * @return Classe abstrata com métodos estaticos para erro ou sucesso em Json
 */
+namespace Unicap\Webservice\Helper;
 abstract class JsonResult
 {
 
     static function error($message = "Parametros inválidos."){
-        $result = new stdClass();
+        $result = new \stdClass();
         $result->status = false;
         $result->message = $message;
         $result->data = array();
@@ -15,7 +16,7 @@ abstract class JsonResult
     }
 
     static function success($data, $message = "Sucesso"){
-       $result = new stdClass();
+       $result = new \stdClass();
        $result->status = true;
        $result->message = $message;
        $result->data = $data;

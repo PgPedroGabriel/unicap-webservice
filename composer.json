@@ -1,0 +1,16 @@
+{
+    "name": "pg/unicap-webservice",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pedro Gabriel",
+            "email": "devpedrogabriel@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Unicap\\": "src/Unicap\\" }
+    },
+    "require": {
+        "php": ">=5.4"
+    }
+}

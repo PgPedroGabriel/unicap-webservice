@@ -18,6 +18,10 @@
     * 12 - emitir via do boleto
  */
 
+namespace Unicap\Webservice\Server;
+
+use Unicap\Webservice\Helper\JsonResult;
+
 class Request
 {
 

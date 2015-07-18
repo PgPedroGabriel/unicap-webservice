@@ -3,6 +3,11 @@
  * @author Pedro Gabriel
  * Classse que retorna e trata todo HTML da resposta do servidor da UNICAP
  */
+namespace Unicap\Webservice\Server;
+
+use Unicap\Webservice\Helper\JsonResult;
+use Unicap\Webservice\Helper\StringHelper;
+
 class ServerOutput
 {
     private $html;
@@ -53,7 +58,7 @@ class ServerOutput
     public function onlyCharacters()
     {
         $html = strip_tags($this->html);
-        return Helper::removeBlankSpaces($html);
+        return StringHelper::removeBlankSpaces($html);
     }
 
     public function getSessionHash()
@@ -84,9 +89,9 @@ class ServerOutput
 
         foreach ($arrayChunck as $key => $value) {
             if(isset($value[0]) && isset($value[1])){
-                $type = Helper::clearHtml($value[0]);
+                $type = StringHelper::clearHtml($value[0]);
                 if(!empty($type))
-                    $result[$type] = Helper::clearHtml($value[1]);
+                    $result[$type] = StringHelper::clearHtml($value[1]);
             }
 
         }
@@ -126,21 +131,21 @@ class ServerOutput
 
         $chunkTime = array_chunk($timeInformations[1], 20); // we has 20 days of horary in array result;
 
-        $days = Helper::getDays($chunkTime[1]); // Get a array of days Dinamic  2 to 7
-        $schedules = Helper::getTimes($chunkTime[0]); // Return the horaries of UNICAP
+        $days = StringHelper::getDays($chunkTime[1]); // Get a array of days Dinamic  2 to 7
+        $schedules = StringHelper::getTimes($chunkTime[0]); // Return the horaries of UNICAP
 
         foreach($arrayChunck as $arrayMatter){
 
-            $result[$i]['matterCode'] = Helper::clearHtml($arrayMatter[0]);
-            $result[$i]['matterName'] = Helper::upperRomanString(Helper::clearHtml($arrayMatter[1]));
-            $result[$i]['matterClass'] = Helper::clearHtml($arrayMatter[2]);
+            $result[$i]['matterCode'] = StringHelper::clearHtml($arrayMatter[0]);
+            $result[$i]['matterName'] = StringHelper::upperRomanString(StringHelper::clearHtml($arrayMatter[1]));
+            $result[$i]['matterClass'] = StringHelper::clearHtml($arrayMatter[2]);
 
-            $matterRoomString = preg_replace('/\s+/', '-', Helper::clearHtml($arrayMatter[3]));
+            $matterRoomString = preg_replace('/\s+/', '-', StringHelper::clearHtml($arrayMatter[3]));
 
             $result[$i]['matterRoom'] = "Bloco ".$matterRoomString[0].", sala ".$matterRoomString;
             $result[$i]['matterRoomShort'] = $matterRoomString;
 
-            $result[$i]['initialLetters']   = Helper::getInitialLetters($result[$i]['matterName']);
+            $result[$i]['initialLetters']   = StringHelper::getInitialLetters($result[$i]['matterName']);
 
 
             $timeExploded = explode(" ",trim($arrayMatter[4]));
@@ -178,8 +183,8 @@ class ServerOutput
             }
 
 
-            $result[$i]['matterTime'] = Helper::clearHtml($arrayMatter[4]);
-            $result[$i]['matterPeriod'] = Helper::clearHtml($arrayMatter[7]);
+            $result[$i]['matterTime'] = StringHelper::clearHtml($arrayMatter[4]);
+            $result[$i]['matterPeriod'] = StringHelper::clearHtml($arrayMatter[7]);
 
             $i++;
         }
@@ -262,12 +267,12 @@ class ServerOutput
         $arrayChunck = array_chunk($matterInformations[1], 7);
 
         foreach ($matterName[1] as $key => $matter) {
-            $matterCode = Helper::clearHtml($arrayChunck[$key][0]);
-            $result[$matterCode]['firstGq'] = Helper::clearHtml($arrayChunck[$key][2]);
-            $result[$matterCode]['firstGq2Call'] = Helper::clearHtml($arrayChunck[$key][3]);
-            $result[$matterCode]['secondGq'] = Helper::clearHtml($arrayChunck[$key][4]);
-            $result[$matterCode]['final'] = Helper::clearHtml($arrayChunck[$key][5]);
-            $result[$matterCode]['final2Call'] = Helper::clearHtml($arrayChunck[$key][6]);
+            $matterCode = StringHelper::clearHtml($arrayChunck[$key][0]);
+            $result[$matterCode]['firstGq'] = StringHelper::clearHtml($arrayChunck[$key][2]);
+            $result[$matterCode]['firstGq2Call'] = StringHelper::clearHtml($arrayChunck[$key][3]);
+            $result[$matterCode]['secondGq'] = StringHelper::clearHtml($arrayChunck[$key][4]);
+            $result[$matterCode]['final'] = StringHelper::clearHtml($arrayChunck[$key][5]);
+            $result[$matterCode]['final2Call'] = StringHelper::clearHtml($arrayChunck[$key][6]);
 
             $i++;
         }
@@ -314,13 +319,13 @@ class ServerOutput
         $arrayChunck = array_chunk($matterInformations[1], 8);
 
         foreach ($arrayChunck as $key => $arrayMatter) {
-            $matterCode = Helper::clearHtml($arrayMatter[0]);
-            $result[$matterCode]['firstGq'] = Helper::clearHtml($arrayMatter[2]);
-            $result[$matterCode]['secondGq'] = Helper::clearHtml($arrayMatter[3]);
-            $result[$matterCode]['average'] = Helper::clearHtml($arrayMatter[4]);
-            $result[$matterCode]['final'] = Helper::clearHtml($arrayMatter[5]);
-            $result[$matterCode]['finalAverage'] = Helper::clearHtml($arrayMatter[6]);
-            $result[$matterCode]['finalSituation'] = Helper::clearHtml($arrayMatter[7]);
+            $matterCode = StringHelper::clearHtml($arrayMatter[0]);
+            $result[$matterCode]['firstGq'] = StringHelper::clearHtml($arrayMatter[2]);
+            $result[$matterCode]['secondGq'] = StringHelper::clearHtml($arrayMatter[3]);
+            $result[$matterCode]['average'] = StringHelper::clearHtml($arrayMatter[4]);
+            $result[$matterCode]['final'] = StringHelper::clearHtml($arrayMatter[5]);
+            $result[$matterCode]['finalAverage'] = StringHelper::clearHtml($arrayMatter[6]);
+            $result[$matterCode]['finalSituation'] = StringHelper::clearHtml($arrayMatter[7]);
         }
         return $result;
     }
@@ -348,7 +353,7 @@ class ServerOutput
         foreach ($arrayChunck as $docket) {
 
             if(isset($docket[1])){
-                $result[] = array('Vencimento' => $docket[2], 'Mês' => Helper::getMesExtenso($docket[1]), 'Parcela' => $docket[1]);
+                $result[] = array('Vencimento' => $docket[2], 'Mês' => StringHelper::getMesExtenso($docket[1]), 'Parcela' => $docket[1]);
             }
         }
 
@@ -374,17 +379,17 @@ class ServerOutput
         $arrayChunck = array_chunk($toCourse[2], 7);
 
         foreach ($arrayChunck as $matter) {
-            $matterCode = Helper::clearHtml($matter[2]);
+            $matterCode = StringHelper::clearHtml($matter[2]);
 
             if(!isset($cursingMatters[$matterCode])) {
 
-                $matterName = Helper::upperRomanString(Helper::clearHtml($matter[4]));
+                $matterName = StringHelper::upperRomanString(StringHelper::clearHtml($matter[4]));
 
-                $result[] = array('period' => Helper::clearHtml($matter[0]),
+                $result[] = array('period' => StringHelper::clearHtml($matter[0]),
                                 'matterCode' => $matterCode,
                                 'name' => $matterName,
-                                'initialLetters' => Helper::getInitialLetters($matterName),
-                                'credits' => Helper::clearHtml($matter[5]),
+                                'initialLetters' => StringHelper::getInitialLetters($matterName),
+                                'credits' => StringHelper::clearHtml($matter[5]),
                                 );
             }
         }
@@ -412,27 +417,27 @@ class ServerOutput
 
         foreach ($arrayChunck as $matter) {
 
-            $period = str_split(Helper::clearHtml($matter[0]), 4);
+            $period = str_split(StringHelper::clearHtml($matter[0]), 4);
             if(isset($period[1]))
                 $period = "Cursada em ".$period[0]." no ".$period[1]."º Semestre";
             else if(isset($period[0]))
                 $period = "Cursada em ".$period[0];
             else
-                $period = "Cursada em ".Helper::clearHtml($matter[0]);
+                $period = "Cursada em ".StringHelper::clearHtml($matter[0]);
 
-            $matterCode = Helper::clearHtml($matter[1]);
+            $matterCode = StringHelper::clearHtml($matter[1]);
 
-            $matterName = Helper::upperRomanString(Helper::clearHtml($matter[2]));
+            $matterName = StringHelper::upperRomanString(StringHelper::clearHtml($matter[2]));
 
 
-            $situation = Helper::clearHtml($matter[4]);
+            $situation = StringHelper::clearHtml($matter[4]);
 
             $result[] = array('period' => $period,
                             'matterCode' => $matterCode,
                             'name' => $matterName,
-                            'initialLetters' => Helper::getInitialLetters($matterName),
-                            'average' => Helper::clearHtml($matter[3]),
-                            'yearComplet' => Helper::clearHtml($matter[0]),
+                            'initialLetters' => StringHelper::getInitialLetters($matterName),
+                            'average' => StringHelper::clearHtml($matter[3]),
+                            'yearComplet' => StringHelper::clearHtml($matter[0]),
                             'situation' => $situation,
                         );
         }
