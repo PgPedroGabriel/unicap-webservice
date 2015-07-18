@@ -43,11 +43,18 @@ abstract class StringHelper
 
         $lastWord = $words[count($words)-1];
 
-        preg_match('/^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i', $lastWord, $matches);
-
-        if(!empty($matches[0])){
+        if($lastWord == "I"     ||
+            $lastWord == "Ii"   ||
+            $lastWord == "Iii"  ||
+            $lastWord == "Iv"   ||
+            $lastWord == "V"    ||
+            $lastWord == "Vi"   ||
+            $lastWord == "Vii"  ||
+            $lastWord == "Viii"   ) {
             $oldName = $string;
-            $string = @substr($string, 0, strpos($string, $matches[0])).mb_strtoupper($matches[0]);
+
+            $string = @substr($string, 0, strlen($string) - strlen($lastWord)).strtoupper($lastWord);
+
             if(empty($string) || $string == null){
                 $string = $oldName;
             }
