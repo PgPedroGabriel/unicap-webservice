@@ -4,7 +4,8 @@ namespace Unicap\Html\Controllers;
 
 use Unicap\Webservice\Common\Core,
     Unicap\Webservice\Helper\JsonResult,
-    Unicap\DataSource\Files\LogTxt;
+    Unicap\DataSource\Files\LogTxt,
+    Unicap\DataSource\Exceptions\FileException;
 
 class Feedback
 {
@@ -18,13 +19,23 @@ class Feedback
 		{
 			$core = new Core();
 
-			$log = new LogTxt('feedback-'.date('Y-m-d H:i'));
+			try 
+			{
+				
+				$log = new LogTxt('feedback-'.date('Y-m-d H:i'));
 
-			$message = @$_POST['message'];
+				$message = @$_POST['message'];
 
-			$log->putContent($core->serialize().":\n".$message);
+				$log->putContent($core->serialize().":\n".$message);
 
-			$log->flush();
+				$log->flush();
+				
+			} 
+			catch (FileException $e) 
+			{
+
+				JsonResult::error($e->getMessage());
+			}
 
 			JsonResult::success(array());
 		}
