@@ -12,6 +12,7 @@
 namespace Unicap\Webservice\Common;
 
 use Unicap\Webservice\Helper\JsonResult;
+use Unicap\DataSource\Files\LogTxt;
 
 class Core
 {
@@ -139,6 +140,7 @@ class Core
 
     public function getFullData()
     {
+
         return array('userData' => $this->userData,
                     'matterData' => $this->matterData,
                     'docketsData' => $this->dockets,
@@ -156,7 +158,7 @@ class Core
                         'toCourseMatters' => $this->toCourseMatters,
                         'coursedMatters' => $this->coursedMatters ) ;
 
-        return serialize($data);
+        return json_encode($data);
     }
 
     public function setToCourseMatters($matters)

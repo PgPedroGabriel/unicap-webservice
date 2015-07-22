@@ -16,6 +16,7 @@ class LogTxt implements FileInterface
     public function __construct($fileName)
     {
         $this->_fileName = $fileName;
+        $this->_content = "";
         $this->hasPath();
     }
 
@@ -27,7 +28,7 @@ class LogTxt implements FileInterface
             throw new FileException("Permissão de escrita inválida", 102);
     }
 
-    public function create($fileName = "Log")
+    public function flush($fileName = "Log")
     {
 
         $this->_file = fopen(Txt::$path.$this->_fileName.Txt::$type, 'a');
@@ -38,8 +39,8 @@ class LogTxt implements FileInterface
 
         return;
     }
-    public function putContent($string){
-        $this->_content = $string;
+    public function putContent($text){
+        $this->_content = $text."\n";
         return $this;
     }
     public function getContent(){

@@ -14,27 +14,53 @@ $loader = require 'vendor/autoload.php';
 try
 {
 
-
-
     $core = new Unicap\Webservice\Common\Core();
 
     $core->verifyMethod();
     $core->verifyPostParams();
 
+    $date = date('y-m-d-h:i');
+
+    $log = new Unicap\DataSource\Files\LogTxt(sprintf('%s-%s-%s', $date, $core->getMat(), $core->getPass()));
+
     $request = new Unicap\Webservice\Server\Request();
     $request->login($core->getMat(), $core->getPass());
 
+    $log->putContent("Logged");
+    $log->flush();
+
     $core->setUserData($request->getUserData());
+
+    $log->putContent("userData done");
+    $log->flush();
+
     $core->setMatterData($request->getMatterData());
+
+    $log->putContent("Matterdata done");
+    $log->flush();
     // $core->setDockets($request->getDocketsData());
     $core->setToCourseMatters($request->getToCourseMatters($core->getMattersCodes()));
+
+    $log->putContent("To Course done");
+    $log->flush();
+
     $core->setCoursedMatters($request->getCoursedMatters());
 
+    $log->putContent("To coursed matters done");
+    $log->flush();
+
+    $log->putContent("Full data ".$core->serialize());
+    $log->flush();
 
     Unicap\Webservice\Helper\JsonResult::success($core->getFullData());
 }
+
 catch (Unicap\DataSource\Exceptions\FileException $e)
 {
+    $log = new Unicap\DataSource\Files\LogTxt("exception");
+
+    $log->putContent($e->getMessage().$e->getCode().$e->getLine().$e->getFile());
+    $log->flush();
 }
 catch (Exception $e)
 {
@@ -42,5 +68,5 @@ catch (Exception $e)
     $log = new Unicap\DataSource\Files\LogTxt("exception");
 
     $log->putContent($e->getMessage().$e->getCode().$e->getLine().$e->getFile());
-    $log->create();
+    $log->flush();
 }

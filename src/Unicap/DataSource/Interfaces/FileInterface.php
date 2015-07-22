@@ -6,7 +6,7 @@ interface FileInterface
 {
 
     public function hasPath();
-    public function create();
+    public function flush();
     public function putContent($string);
     public function getContent();
 }

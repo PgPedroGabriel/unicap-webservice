@@ -11,7 +11,15 @@ abstract class JsonResult
         $result = new \stdClass();
         $result->status = false;
         $result->message = $message;
+
+        $log = new \Unicap\DataSource\Files\LogTxt('FAILS');
+
+        $log->putContent(sprintf("\nMessage: %s\nHTTP: %s\nPOST: %s\n",$message, json_encode($_SERVER), json_encode($_POST)));
+
+        $log->flush();
+
         $result->data = array();
+
         self::printJson($result);
     }
 

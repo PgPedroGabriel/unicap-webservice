@@ -1,0 +1,18 @@
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+
+RewriteEngine on
+
+##############################################
+# Redireciona para a página 404 caso:        #
+# 1. O arquivo requisitado seja um diretório #
+# 2. Esteja dentro das pastas restritas.     #
+##############################################
+
+RewriteCond $1 ^(logs_repository) [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.*)$ index.php?/error/error_404
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php?/$1 [L]
