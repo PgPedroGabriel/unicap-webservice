@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+		<title>Bootstrap 101 Template</title>
+
+		<!-- Bootstrap -->
+
+
+		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="container">
+
+			<form class="form-signin" id="feedback" method="POST">
+				
+				<h2 class="form-signin-heading">Feedback</h2>
+
+				<div class="form-group">
+					<label for="matricula" class="sr-only">Matricula</label>
+					<input type="text" name="matricula" id="matricula" class="form-control" maxlength="9" minlength="9" placeholder="Matricula" required="true">
+				</div>
+				<div class="form-group">
+					<label for="senha" class="sr-only">Senha</label>
+					<input type="password" name="senha" id="senha" class="form-control" maxlength="10" minlength="2" placeholder="Senha" required="true">
+				</div>
+				
+				<div class="form-group">
+					<label for="message" class="sr-only">Mensagem</label>
+					<textarea name="message" id="message" class="form-control" placeholder="Mensagem" required="true"></textarea>
+				</div>			
+				<div class="form-group">
+					<button class="btn btn-lg btn-success btn-block" type="submit">Enviar</button>
+				</div>
+
+				<div id="resultMessage" class="alert alert-warning"></div>
+			</form>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="js/feedback.js"></script>
+
+	</body>
+</html>

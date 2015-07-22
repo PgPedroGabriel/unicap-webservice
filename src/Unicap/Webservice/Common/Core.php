@@ -28,6 +28,9 @@ class Core
 
     function __construct() {
 
+        $this->verifyMethod();
+        $this->verifyPostParams();
+    
     }
 
     /**

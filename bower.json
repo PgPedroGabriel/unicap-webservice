@@ -1,0 +1,9 @@
+{
+  "name": "unicap-webservice",
+  "version": "0.0.0",
+  "homepage": "https://github.com/PgPedroGabriel/unicap-webservice",
+  "authors": [
+    "Pedro Gabriel <devpedrogabriel@gmail.com>"
+  ],
+  "license": "MIT"
+}
