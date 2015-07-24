@@ -141,8 +141,33 @@ class Request
         */
 
         foreach ($basicDataFromMatters as $key => $value) {
-                $basicDataFromMatters[$key]['testInformations'] = $mattersCalendar[$value["matterCode"]];
-                $basicDataFromMatters[$key]['noteInformations'] = $mattersNotes[$value["matterCode"]];
+
+                if(isset($mattersCalendar[$value["matterCode"]]))
+                {
+                    $basicDataFromMatters[$key]['testInformations'] = $mattersCalendar[$value["matterCode"]];
+                }
+                else
+                {
+                    $basicDataFromMatters[$key]['testInformations']['firstGq']      = "Não informado";
+                    $basicDataFromMatters[$key]['testInformations']['firstGq2Call'] = "Não informado";
+                    $basicDataFromMatters[$key]['testInformations']['secondGq']     = "Não informado";
+                    $basicDataFromMatters[$key]['testInformations']['final']        = "Não informado";
+                    $basicDataFromMatters[$key]['testInformations']['final2Call']   = "Não informado";
+                }
+
+                if(isset($mattersNotes[$value["matterCode"]]))
+                {
+                    $basicDataFromMatters[$key]['noteInformations'] = $mattersNotes[$value["matterCode"]];
+                }
+                else
+                {
+                    $basicDataFromMatters[$key]['noteInformations']['firstGq']        = "Não informado";
+                    $basicDataFromMatters[$key]['noteInformations']['secondGq']       = "Não informado";
+                    $basicDataFromMatters[$key]['noteInformations']['average']        = "Não informado";
+                    $basicDataFromMatters[$key]['noteInformations']['final']          = "Não informado";
+                    $basicDataFromMatters[$key]['noteInformations']['finalAverage']   = "Não informado";
+                    $basicDataFromMatters[$key]['noteInformations']['finalSituation'] = "Não informado";
+                }
         }
 
         return $basicDataFromMatters;

@@ -55,6 +55,18 @@ class ServerOutput
         return $this->html;
     }
 
+    public function checkNotRegistered()
+    {
+        if(strstr($this->onlyCharacters(), "Alunonãomatriculado"))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public function onlyCharacters()
     {
         $html = strip_tags($this->html);
@@ -104,8 +116,9 @@ class ServerOutput
 
         preg_match_all('/<table align=center border=1 width="100%" height=35 cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$this->getHtml(), $tableMatter);
 
-        if(!isset($tableMatter[1][0]))
+        if(!isset($tableMatter[1][0])){
             JsonResult::error("Erro em encontrar suas diciplinas");
+        }
 
         preg_match_all('/<table width="100%%" border="0">([^`]*?)<\/table>/',$this->getHtml(), $tableHorary);
         if(!isset($tableHorary[1][0]))
@@ -141,9 +154,17 @@ class ServerOutput
             $result[$i]['matterClass'] = StringHelper::clearHtml($arrayMatter[2]);
 
             $matterRoomString = preg_replace('/\s+/', '-', StringHelper::clearHtml($arrayMatter[3]));
+            if(!empty($matterRoomString))
+            {
+                $result[$i]['matterRoom'] = "Bloco ".$matterRoomString[0].", sala ".$matterRoomString;
+                $result[$i]['matterRoomShort'] = $matterRoomString;
+            }
+            else
+            {
+                $result[$i]['matterRoom'] = "Não informado";
+                $result[$i]['matterRoomShort'] = "Não informado";
+            }
 
-            $result[$i]['matterRoom'] = "Bloco ".$matterRoomString[0].", sala ".$matterRoomString;
-            $result[$i]['matterRoomShort'] = $matterRoomString;
 
             $result[$i]['initialLetters']   = StringHelper::getInitialLetters($result[$i]['matterName']);
 
@@ -163,23 +184,31 @@ class ServerOutput
             *  We need Get the Day (first Positiion in string) And the Horary (The continous...)
             */
 
-            foreach ($timeExploded as $key => $value) {
-                for($j = 1; $j < strlen($value); $j++)
-                    $result[$i]['days'][$days[$value[0]]][] = $schedules[$value[$j]];
+            $result[$i]['days'] = array();
 
-                $quantityHoraries = count($result[$i]['days'][$days[$value[0]]]);
+            if(!empty($timeExploded) && count($timeExploded) >= 1)
+            {
+                foreach ($timeExploded as $key => $value) {
+                    if(strlen($value) > 1)
+                    {
+                        for($j = 1; $j < strlen($value); $j++)
+                            $result[$i]['days'][$days[$value[0]]][] = $schedules[$value[$j]];
 
-                if($quantityHoraries > 1){
-                    $firstHorary = $result[$i]['days'][$days[$value[0]]][0];
-                    $lastHorary = end($result[$i]['days'][$days[$value[0]]]);
+                        $quantityHoraries = count($result[$i]['days'][$days[$value[0]]]);
 
-                    $explodeFirstHorary = explode('-', $firstHorary);
-                    $explodeLastHorary = explode('-', $lastHorary);
+                        if($quantityHoraries > 1){
+                            $firstHorary = $result[$i]['days'][$days[$value[0]]][0];
+                            $lastHorary = end($result[$i]['days'][$days[$value[0]]]);
 
-                    if(isset($explodeFirstHorary[0]) && isset($explodeLastHorary[1]))
-                        $result[$i]['days'][$days[$value[0]]] = $explodeFirstHorary[0].'às'.$explodeLastHorary[1];
+                            $explodeFirstHorary = explode('-', $firstHorary);
+                            $explodeLastHorary = explode('-', $lastHorary);
+
+                            if(isset($explodeFirstHorary[0]) && isset($explodeLastHorary[1]))
+                                $result[$i]['days'][$days[$value[0]]] = $explodeFirstHorary[0].'às'.$explodeLastHorary[1];
+                        }
+                    }
+
                 }
-
             }
 
 
@@ -247,8 +276,12 @@ class ServerOutput
 
         preg_match_all('/<table align="center" border="1" width="100%" cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$this->getHtml(), $tableTestInformations);
 
-        if (!isset($tableTestInformations[1][0]))
-            JsonResult::error("Falha em resgatar o calendário de provas");
+        if (!isset($tableTestInformations[1][0])){
+            if($this->checkNotRegistered())
+                return array();
+            else
+                JsonResult::error("Falha em resgatar o calendário de provas");
+        }
 
         preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$tableTestInformations[1][0], $matterInformations);
 
@@ -306,8 +339,16 @@ class ServerOutput
     public function getMattersNotes()
     {
         preg_match_all('/<table border="1" width="100%" cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$this->getHtml(), $tableTestInformations);
-        if (!isset($tableTestInformations[1][0]))
-            JsonResult::error("Falha em resgatar as notas");
+        if (!isset($tableTestInformations[1][0])){
+            if($this->checkNotRegistered())
+            {
+                return array();
+            }
+            else
+            {
+                JsonResult::error("Falha em resgatar as notas");
+            }
+        }
 
         preg_match_all('/<td align="center" class="tab_texto">([^`]*?)<\/td>/',$tableTestInformations[1][0], $matterInformations);
 
