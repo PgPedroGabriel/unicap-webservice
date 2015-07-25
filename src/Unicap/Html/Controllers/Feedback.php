@@ -37,7 +37,7 @@ class Feedback
 				JsonResult::error($e->getMessage());
 			}
 
-			JsonResult::success(array());
+			JsonResult::success(array(), "Obrigado, vamos investigar e entraremos em contato por email quando resolvermos o problema.");
 		}
 		else
 		{

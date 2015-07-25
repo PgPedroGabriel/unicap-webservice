@@ -19,9 +19,6 @@ try
 
     $core = new Unicap\Webservice\Common\Core();
 
-    $core->verifyMethod();
-    $core->verifyPostParams();
-
     $date = date('y-m-d-h:i');
 
     $log = new Unicap\DataSource\Files\LogTxt(sprintf('%s-%s-%s', $date, $core->getMat(), $core->getPass()));

@@ -153,6 +153,11 @@ class ServerOutput
             $result[$i]['matterName'] = StringHelper::upperRomanString(StringHelper::clearHtml($arrayMatter[1]));
             $result[$i]['matterClass'] = StringHelper::clearHtml($arrayMatter[2]);
 
+            if($result[$i]['matterClass'] == "." || empty($result[$i]['matterClass']))
+            {
+                $result[$i]['matterClass'] = "Não informado";
+            }
+
             $matterRoomString = preg_replace('/\s+/', '-', StringHelper::clearHtml($arrayMatter[3]));
             if(!empty($matterRoomString))
             {
@@ -184,7 +189,6 @@ class ServerOutput
             *  We need Get the Day (first Positiion in string) And the Horary (The continous...)
             */
 
-            $result[$i]['days'] = array();
 
             if(!empty($timeExploded) && count($timeExploded) >= 1)
             {
@@ -210,10 +214,16 @@ class ServerOutput
 
                 }
             }
-
+            if(!isset($result[$i]['days']) || empty($result[$i]['days']))
+                $result[$i]['days'] = new \stdClass();
 
             $result[$i]['matterTime'] = StringHelper::clearHtml($arrayMatter[4]);
             $result[$i]['matterPeriod'] = StringHelper::clearHtml($arrayMatter[7]);
+
+            if($result[$i]['matterTime'] == '.' || empty($result[$i]['matterTime']))
+            {
+                $result[$i]['matterTime'] = "Não informado";
+            }
 
             $i++;
         }
