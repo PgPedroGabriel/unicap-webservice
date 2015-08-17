@@ -67,6 +67,19 @@ class ServerOutput
         }
     }
 
+    public function checkIfHasDiciplines()
+    {
+        if(strstr($this->onlyCharacters(), "Alunonãopossuidisciplinascursadas"))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
     public function onlyCharacters()
     {
         $html = strip_tags($this->html);
@@ -450,6 +463,11 @@ class ServerOutput
 
     public function getCoursedMatters()
     {
+
+        if($this->checkIfHasDiciplines())
+        {
+            return array();
+        }
 
         preg_match_all('/<table border=1 width="100%" height=15 cellpadding="0" cellspacing="0">([^`]*?)<\/table>/',$this->getHtml(), $table);
 
